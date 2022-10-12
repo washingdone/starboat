@@ -1,5 +1,5 @@
 ./configFile
-./starboat/
+./starboat/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
