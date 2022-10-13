@@ -63,5 +63,5 @@ async def uploadScreenshot(interaction, message_id):
     print(message)
     await interaction.response.send_message("Done!")
 
-bot.run(options.token) # run client
+client.run(options.token) # run client
 
