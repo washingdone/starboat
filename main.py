@@ -56,12 +56,12 @@ intents.message_content = True # ensure nessecary intents
 client = starboatClient(intents=intents) # define client
 options = starboatOptions("./configFile") # define options
 
-@client.slash_command(name="upload_screenshot", description="Add file to message")
-async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment):
-    message = await options.channel.fetch_message(message_id)
-    print(message)
-    await message.attachments(image)
-    await interaction.response.send_message("Done!")
+@client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
+async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment): # define new command
+    message = await options.channel.fetch_message(message_id) # find requested Message object
+    await message.edit(attachments=None) # remove existing Attachments
+    await message.edit(file=await image.to_file()) # upload Attachment as a File
+    await interaction.response.send_message("Done!") # Inform user of completetion
 
 client.run(options.token) # run client
 
