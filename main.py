@@ -55,5 +55,13 @@ intents.message_content = True # ensure nessecary intents
 
 client = starboatClient(intents=intents) # define client
 options = starboatOptions("./configFile") # define options
+bot = commands.InteractionBot() # register commands
 
-client.run(options.token) # run client
+@bot.slash_command(name="upload_screenshot", description="Add file to message")
+async def uploadScreenshot(interaction, message_id):
+    message = await options.channel.fetch_message(message_id)
+    print(message)
+    await interaction.response.send_message("Done!")
+
+bot.run(options.token) # run client
+
