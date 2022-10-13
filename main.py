@@ -1,7 +1,7 @@
 # A Starboard bot for Discord
 
 # Import dependencies
-import discord # needed for controlling access to discord
+import disnake as discord # needed for controlling access to discord
 import json # needed for parsing config file
 
 class starboatOptions(): # build custom options class
