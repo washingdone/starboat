@@ -12,6 +12,7 @@ Required: disnake
 
 ## Setup (Ubuntu)
 Reccomendation: Create a virtual environment
-`python3 -m venv starboat`
-`source starboat/bin/activate`
-`pip install -U disnake`
+```shell
+python3 -m venv starboat
+source starboat/bin/activate
+pip install -U disnake```
