@@ -1,17 +1,18 @@
 # A Starboard bot for Discord
 
 # Import dependencies
-import disnake as discord # needed for controlling access to discord
+import disnake # needed for controlling access to discord
+from disnake.ext import commands # needed for controlling slash commands
 import json # needed for parsing config file
 
 class starboatOptions(): # build custom options class
     def __init__(self, configPath): # define init behavior
         config = json.load(open(configPath)) # load config file as json object
         archiveEmote = config["archiveEmote"] # store archive emote in variable
-        archiveEmote = discord.PartialEmoji.from_str(archiveEmote) # transform emoji into PartialEmoji from discord class
+        archiveEmote = disnake.PartialEmoji.from_str(archiveEmote) # transform emoji into PartialEmoji from discord class
         
         confirmEmote = config["confirmEmote"] # store confirmation emote in variable
-        confirmEmote = discord.PartialEmoji.from_str(confirmEmote) # transform emoji into PartialEmoji from discord class
+        confirmEmote = disnake.PartialEmoji.from_str(confirmEmote) # transform emoji into PartialEmoji from discord class
         
         self.token = config["token"] # store token in object
         self.arcEmote = archiveEmote # store archive emote in object
@@ -21,7 +22,7 @@ class starboatOptions(): # build custom options class
         
         print(f"Initialized starboat options using {configPath}") # print completeion of init to console
 
-class starboatClient(discord.Client): # build custom client class
+class starboatClient(disnake.Client): # build custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
         options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
         print(f'Logged on as {self.user}!') # log bot readiness to console
@@ -49,7 +50,7 @@ class starboatClient(discord.Client): # build custom client class
             await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
 
-intents = discord.Intents.default() # load intents class
+intents = disnake.Intents.default() # load intents class
 intents.message_content = True # ensure nessecary intents
 
 client = starboatClient(intents=intents) # define client
