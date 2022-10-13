@@ -1,0 +1,7 @@
+{
+    "token": "Your Token Here",
+    "archiveChannel": "Your Channel ID Here",
+    "archiveEmote": "📌",
+    "confirmEmote": "✅",
+    "minReacts": 5
+}
