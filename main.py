@@ -78,7 +78,8 @@ async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachme
     message = await options.channel.fetch_message(message_id) # find requested Message object
     await message.edit(attachments=None) # remove existing Attachments
     await message.edit(file=await image.to_file()) # upload Attachment as a File
-    await interaction.response.send_message("Done!") # Inform user of completetion
+    await interaction.response.send_message(content="Done!", delete_after=5) # Inform user of completetion
+    
 
 client.run(options.token) # run client
 
