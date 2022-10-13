@@ -2,6 +2,8 @@
     "token": "Your Token Here",
     "archiveChannel": "Your Channel ID Here",
     "archiveEmote": "📌",
+    "overrideEmote": "📍",
     "confirmEmote": "✅",
-    "minReacts": 5
+    "overrideRole": "Your Role ID Here",
+    "minReacts": 1
 }
