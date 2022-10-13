@@ -1,7 +1,6 @@
 # A Starboard bot for Discord
 
 # Import dependencies
-from typing import AsyncIterator
 import disnake # needed for controlling access to discord
 from disnake.ext import commands # needed for controlling slash commands
 import json # needed for parsing config file
@@ -58,9 +57,13 @@ class starboatClient(commands.InteractionBot): # build custom client class
             if (ignoreMessage == True and forceArchive == False): return # exit if criteria not met
 
             arcContent = f"{canMessage.channel.mention} - {canMessage.created_at.date()} - {canMessage.author.mention}\n" # build archive message (split for clarity)
-            arcContent += f"{canMessage.content}\n"
-            arcContent += f"{canMessage.jump_url}"
-            await options.channel.send(arcContent) # send message to archive channel
+            arcContent += f"{canMessage.content}"
+
+            buttonView = disnake.ui.View() # build view nessecary to hold button
+            button = disnake.ui.Button(style=disnake.ButtonStyle.link, label="Jump to Message", url=canMessage.jump_url) # build jump button
+            buttonView.add_item(button) # add button to view
+
+            await options.channel.send(content=arcContent, view=buttonView) # send message to archive channel
             await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
 
