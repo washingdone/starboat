@@ -7,31 +7,52 @@ import json # needed for parsing config file
 class starboatOptions(): # build custom options class
     def __init__(self, configPath): # define init behavior
         config = json.load(open(configPath)) # load config file as json object
-        archiveEmote = config["archiveEmote"] # store config emote in variable
+        archiveEmote = config["archiveEmote"] # store archive emote in variable
         archiveEmote = discord.PartialEmoji.from_str(archiveEmote) # transform emoji into PartialEmoji from discord class
         
+        confirmEmote = config["confirmEmote"] # store confirmation emote in variable
+        confirmEmote = discord.PartialEmoji.from_str(confirmEmote) # transform emoji into PartialEmoji from discord class
+        
         self.token = config["token"] # store token in object
-        self.emote = archiveEmote # store emote in object
-        self.channel = config["archiveChannel"] # store starboard channel in object
+        self.arcEmote = archiveEmote # store archive emote in object
+        self.confEmote = confirmEmote # store confirmation emote in object
+        self.channel = config["archiveChannel"] # store archive channel id in object to be transformed later
+        self.minReacts = config["minReacts"]
         
         print(f"Initialized starboat options using {configPath}") # print completeion of init to console
 
 class starboatClient(discord.Client): # build custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
+        options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
         print(f'Logged on as {self.user}!') # log bot readiness to console
 
     async def on_message(self, message): # define listener behavior for new messages
         print(f'Message from {message.author}: {message.content}') # log message to console -- TESTING
 
     async def on_raw_reaction_add(self, payload): # define listener behavior for new reaction event (need raw method to capture all reactions, not just cached messages)
-        print(f'Message reacted: {payload.message_id}, emoji: {payload.emoji}.') # print message id and reaction emoji to console -- TESTING
-        if (options.emote == payload.emoji): # check for equality between the emoji defined in the config and the message's emoji
-            print("Archival Candidate") # print message status as candidate -- INDEV
+        if (options.arcEmote == payload.emoji): # check for equality between the emoji defined in the config and the message's emoji
+            canChannel = await self.fetch_channel(payload.channel_id) # get channel of message
+            canMessage = await canChannel.fetch_message(payload.message_id) # get message object
+            
+            reacts = canMessage.reactions # store array of reactions for loping
+            ignoreMessage = False
+            for react in reacts: # search raction array
+                if (str(react.emoji) == str(options.confEmote)) : ignoreMessage = True # exit if message already pinned
+                if (str(react.emoji) == str(options.arcEmote) and react.count != options.minReacts): ignoreMessage = True # exit if have not met reaction count
+
+            if (ignoreMessage): return # exit if criteria not met
+
+            arcContent = f"{canMessage.channel.mention} - {canMessage.created_at.date()} - {canMessage.author.mention}\n" # build archive message (split for clarity)
+            arcContent += f"{canMessage.content}\n"
+            arcContent += f"{canMessage.jump_url}"
+            await options.channel.send(arcContent) # send message to archive channel
+            await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
 
 intents = discord.Intents.default() # load intents class
 intents.message_content = True # ensure nessecary intents
 
-options = starboatOptions("./configFile") # define options
 client = starboatClient(intents=intents) # define client
+options = starboatOptions("./configFile") # define options
+
 client.run(options.token) # run client
