@@ -22,7 +22,7 @@ class starboatOptions(): # build custom options class
         
         print(f"Initialized starboat options using {configPath}") # print completeion of init to console
 
-class starboatClient(disnake.Client): # build custom client class
+class starboatClient(commands.InteractionBot): # build custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
         options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
         print(f'Logged on as {self.user}!') # log bot readiness to console
@@ -55,12 +55,12 @@ intents.message_content = True # ensure nessecary intents
 
 client = starboatClient(intents=intents) # define client
 options = starboatOptions("./configFile") # define options
-bot = commands.InteractionBot() # register commands
 
-@bot.slash_command(name="upload_screenshot", description="Add file to message")
-async def uploadScreenshot(interaction, message_id):
+@client.slash_command(name="upload_screenshot", description="Add file to message")
+async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment):
     message = await options.channel.fetch_message(message_id)
     print(message)
+    await message.attachments(image)
     await interaction.response.send_message("Done!")
 
 client.run(options.token) # run client
