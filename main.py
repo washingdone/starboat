@@ -28,7 +28,7 @@ class starboatClient(commands.InteractionBot): # build custom client class
         print(f'Logged on as {self.user}!') # log bot readiness to console
 
     async def on_message(self, message): # define listener behavior for new messages
-        print(f'Message from {message.author}: {message.content}') # log message to console -- TESTING
+        if (message.author == self.user):  print(f'===== Message Sent =====\n{message.content}') # log bot messages to console
 
     async def on_raw_reaction_add(self, payload): # define listener behavior for new reaction event (need raw method to capture all reactions, not just cached messages)
         if (options.arcEmote == payload.emoji): # check for equality between the emoji defined in the config and the message's emoji
