@@ -13,9 +13,8 @@ class MyClient(discord.Client):
     async def on_raw_reaction_add(self, payload):
         print(f'Message reacted: {payload.message_id}, emoji: {payload.emoji}.')
         print(f'\'{archiveEmote}\'vs\'{payload.emoji}\'')
-        print(archiveEmote.__eq__(payload.emoji))
         print(archiveEmote == payload.emoji)
-        if (payload.emoji == config["archiveEmote"]):
+        if (payload.emoji == archiveEmote):
             print("Archival Candidate")
 
 
@@ -24,6 +23,7 @@ intents.message_content = True
 
 config = json.load(open("configFile"))
 archiveEmote = config["archiveEmote"]
+archiveEmote = discord.PartialEmoji.from_str(archiveEmote)
 
 client = MyClient(intents=intents)
 client.run(config["token"])
