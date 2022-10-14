@@ -82,11 +82,16 @@ except BaseException as err:
     exit(1)
 
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
-async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment): # define new command
-    message = await options.channel.fetch_message(message_id) # find requested Message object
-    await message.edit(attachments=None) # remove existing Attachments
-    await message.edit(file=await image.to_file()) # upload Attachment as a File
-    await interaction.response.send_message(content="Done!", delete_after=5) # Inform user of completetion
+async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): # define new command
+    try:
+        message = await options.channel.fetch_message(message_id) # find requested Message object
+        await message.edit(attachments=None) # remove existing Attachments
+        await message.edit(file=await image.to_file()) # upload Attachment as a File
+    except disnake.HTTPException as err:
+        print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}")
+        await interaction.response.send_message(content=f"Uh oh! An error has occured :(")
+    else:
+        await interaction.response.send_message(content="Success!", delete_after=5) # Inform user of completetion
 
 client.run(options.token) # run client
 
