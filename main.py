@@ -93,8 +93,11 @@ async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): 
         await message.edit(attachments=None) # remove existing Attachments
         await message.edit(file=await image.to_file()) # upload Attachment as a File
     except disnake.HTTPException as err:
-        print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}")
-        await interaction.response.send_message(content=f"Uh oh! An error has occured :(")
+        print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh! An error has occured - Check your message ID!", delete_after=5) # inform user of failure
+    except:
+        print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh, An error has occured `{err.code=}`") # inform user of failure
     else:
         await interaction.response.send_message(content="Success!", delete_after=5) # Inform user of completetion
 
