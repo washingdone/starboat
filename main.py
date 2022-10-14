@@ -1,12 +1,11 @@
 # A Starboard bot for Discord
 
-# Import dependencies
-from lib2to3.pytree import Base
+# Import dependencies 
 import disnake # needed for controlling access to discord
 from disnake.ext import commands # needed for controlling slash commands
 import json # needed for parsing config file
 
-class starboatOptions(): # build custom options class
+class starboatOptions(): # define custom options class
     def __init__(self, configPath): # define init behavior
         config = json.load(open(configPath)) # load config file as json object
         archiveEmote = config["archiveEmote"] # store archive emote in variable
@@ -28,7 +27,7 @@ class starboatOptions(): # build custom options class
         
         print(f"Initialized starboat options using {configPath}") # print completeion of init to console
 
-class starboatClient(commands.InteractionBot): # build custom client class
+class starboatClient(commands.InteractionBot): # define custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
         options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
         options.manRole = options.channel.guild.get_role(options.manRole) # fetch Role object from guild and store in options object
@@ -71,15 +70,16 @@ try:
     intents = disnake.Intents.default() # load intents class
     intents.message_content = True # ensure nessecary intents
 
-    client = starboatClient(intents=intents) # define client
+    client = starboatClient(intents=intents) # build client
 except BaseException as err:
     print(f"Error loading intents, did disnake install correctly?\n{err=}") # Print exception in case of failure to load
     exit(1)
 
 try:
-    options = starboatOptions("./configFile") # define options
+    options = starboatOptions("./configFile") # build options
 except BaseException as err:
-    print(f"Error generation configuration, double-check your configFile!{err=}") # Print exception in case of failure to build options
+    print(f"Error generating configuration, double-check your configFile!\n{err=}") # Print exception in case of failure to build options
+    exit(1)
 
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
 async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment): # define new command
