@@ -1,6 +1,7 @@
 # A Starboard bot for Discord
 
 # Import dependencies
+from lib2to3.pytree import Base
 import disnake # needed for controlling access to discord
 from disnake.ext import commands # needed for controlling slash commands
 import json # needed for parsing config file
@@ -66,12 +67,19 @@ class starboatClient(commands.InteractionBot): # build custom client class
             await options.channel.send(content=arcContent, view=buttonView) # send message to archive channel
             await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
+try:
+    intents = disnake.Intents.default() # load intents class
+    intents.message_content = True # ensure nessecary intents
 
-intents = disnake.Intents.default() # load intents class
-intents.message_content = True # ensure nessecary intents
+    client = starboatClient(intents=intents) # define client
+except BaseException as err:
+    print(f"Error loading intents, did disnake install correctly?\n{err=}") # Print exception in case of failure to load
+    exit(1)
 
-client = starboatClient(intents=intents) # define client
-options = starboatOptions("./configFile") # define options
+try:
+    options = starboatOptions("./configFile") # define options
+except BaseException as err:
+    print(f"Error generation configuration, double-check your configFile!{err=}") # Print exception in case of failure to build options
 
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
 async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachment): # define new command
@@ -79,7 +87,6 @@ async def uploadScreenshot(interaction, message_id: str, image: disnake.Attachme
     await message.edit(attachments=None) # remove existing Attachments
     await message.edit(file=await image.to_file()) # upload Attachment as a File
     await interaction.response.send_message(content="Done!", delete_after=5) # Inform user of completetion
-    
 
 client.run(options.token) # run client
 
