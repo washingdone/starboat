@@ -29,9 +29,14 @@ class starboatOptions(): # define custom options class
 
 class starboatClient(commands.InteractionBot): # define custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
-        options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
-        options.manRole = options.channel.guild.get_role(options.manRole) # fetch Role object from guild and store in options object
-        print(f'Logged on as {self.user}!') # log bot readiness to console
+        try:
+            options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
+            options.manRole = options.channel.guild.get_role(options.manRole) # fetch Role object from guild and store in options object
+        except BaseException as err:
+            print(f"Error transforming channel or role ID to channel, check your config file!\n{err=}")
+            exit(1)
+        else:
+            print(f'Logged on as {self.user}!') # log bot readiness to console
 
     async def on_message(self, message: disnake.Message): # define listener behavior for new messages
         print(f'Message from {message.author}: {message.content}') # log message to console -- TESTING
