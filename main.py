@@ -94,7 +94,8 @@ except BaseException as err:
 
 
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
-async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): # define new command
+async def uploadScreenshot(interaction: disnake.Interaction, message_id, image: disnake.Attachment): # define new command
+    if interaction.author.roles.index(options.manRole): await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # check for permissions
     try:
         message = await options.channel.fetch_message(message_id) # find requested Message object
         await message.edit(file=await image.to_file()) # upload Attachment as a File
@@ -109,7 +110,8 @@ async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): 
 
 
 @client.slash_command(name="remove_attachments", description=" Remove attachments from a message") # inform system we are registering a new command
-async def clearAttachments(interaction, message_id): # define new command
+async def clearAttachments(interaction: disnake.Interaction, message_id): # define new command
+    if interaction.author.roles.index(options.manRole): await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # check for permissions
     try:
         message = await options.channel.fetch_message(message_id) # find requested Message object
         await message.edit(attachments=None) # remove attachments from Message
