@@ -71,6 +71,7 @@ class starboatClient(commands.InteractionBot): # define custom client class
             await options.channel.send(content=arcContent, view=buttonView) # send message to archive channel
             await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
+
 try:
     intents = disnake.Intents.default() # load intents class
     intents.message_content = True # ensure nessecary intents
@@ -86,6 +87,7 @@ except BaseException as err:
     print(f"Error generating configuration, double-check your configFile!\n{err=}") # Print exception in case of failure to build options
     exit(1)
 
+
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
 async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): # define new command
     try:
@@ -96,6 +98,21 @@ async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): 
         await interaction.response.send_message(content=f"Uh oh! An error has occured - Check your message ID!", delete_after=5) # inform user of failure
     except:
         print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh, An error has occured `{err.code=}`") # inform user of failure
+    else:
+        await interaction.response.send_message(content="Success!", delete_after=5) # Inform user of completetion
+
+
+@client.slash_command(name="remove_attachments", description=" Remove attachments from a message") # inform system we are registering a new command
+async def clearAttachments(interaction, message_id): # define new command
+    try:
+        message = await options.channel.fetch_message(message_id) # find requested Message object
+        await message.edit(attachments=None) # remove attachments from Message
+    except disnake.HTTPException as err:
+        print(f"An error has occured during the execution of remove_attachments: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh! An error has occured - Check your message ID!", delete_after=5) # inform user of failure
+    except:
+        print(f"An error has occured during the execution of remove_attachments: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
         await interaction.response.send_message(content=f"Uh oh, An error has occured `{err.code=}`") # inform user of failure
     else:
         await interaction.response.send_message(content="Success!", delete_after=5) # Inform user of completetion
