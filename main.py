@@ -31,7 +31,9 @@ class starboatClient(commands.InteractionBot): # define custom client class
     async def on_ready(self): # define listener behavior for bot ready notifications
         try:
             options.channel = await client.fetch_channel(options.channel) # fetch Channel object from client and store in options object
-            options.manRole = options.channel.guild.get_role(options.manRole) # fetch Role object from guild and store in options object
+            for role in options.channel.guild.roles:
+                if str(role.id) == options.manRole: options.manRole = role; break # if found role, fetch Role object from guild and store in options object
+            options.channel.guild.roles.index(options.manRole) # index role, if not found will throw error
         except BaseException as err:
             print(f"Error transforming channel or role ID to channel, check your config file!\n{err=}")
             exit(1)
@@ -47,15 +49,18 @@ class starboatClient(commands.InteractionBot): # define custom client class
             canMessage = await canChannel.fetch_message(payload.message_id) # get message object
             
             reacts = canMessage.reactions # store array of reactions for looping
-            ignoreMessage, forceArchive = False, False
+            ignoreMessage, forceArchive = True, False
             for react in reacts: # search raction array
-                if (str(react.emoji) == str(options.arcEmote) and react.count != options.minReacts): ignoreMessage = True # exit if have not met reaction count
+                if (str(react.emoji) == str(options.arcEmote) and react.count >= options.minReacts): ignoreMessage = False # exit if have not met reaction count
                 if (str(react.emoji) == str(options.manEmote)): # check if emoji is equal to manual override emoji
                     async for user in react.users(): # search members who reacted with emoji
-                        try:
-                            if (user.roles.index(options.manRole)): forceArchive = True # unignore message since override requested
-                        except:
-                            continue # if failed we know is not Member type, so cannot be admin user
+                        user = await canMessage.guild.fetch_member(user.id) # transform user into Member object
+                        try: 
+                            user.roles.index(options.manRole) # attempt to find role 
+                        except ValueError:
+                            pass # if value error raised, user did not have role, therefore do not unignore message
+                        else:
+                            forceArchive = True # unignore message since override requested
                 if (str(react.emoji) == str(options.confEmote)): ignoreMessage = True # exit if message already pinned
 
 
@@ -94,8 +99,18 @@ except BaseException as err:
 
 
 @client.slash_command(name="upload_screenshot", description="Add file to message") # inform system we are registering a new command
-async def uploadScreenshot(interaction: disnake.Interaction, message_id, image: disnake.Attachment): # define new command
-    if interaction.author.roles.index(options.manRole): await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # check for permissions
+async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): # define new command
+    try:
+        interaction.author.roles.index(options.manRole) # check for permissions
+    except ValueError: # if ValueError thrown, does not have role
+        await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # inform user they do not have permissions
+        return
+    except:
+        print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh, An error has occured `{err.code=}`") # inform user of failure
+        return
+        
+
     try:
         message = await options.channel.fetch_message(message_id) # find requested Message object
         await message.edit(file=await image.to_file()) # upload Attachment as a File
@@ -110,8 +125,15 @@ async def uploadScreenshot(interaction: disnake.Interaction, message_id, image: 
 
 
 @client.slash_command(name="remove_attachments", description=" Remove attachments from a message") # inform system we are registering a new command
-async def clearAttachments(interaction: disnake.Interaction, message_id): # define new command
-    if interaction.author.roles.index(options.manRole): await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # check for permissions
+async def clearAttachments(interaction, message_id): # define new command
+    try:
+        interaction.author.roles.index(options.manRole) # check for permissions
+    except ValueError: # if ValueError thrown, does not have role
+        await interaction.response.send_message(content="You don't have permission to do that", delete_after=5) # inform user they do not have permissions
+    except:
+        print(f"An error has occured during the execution of remove_attachments: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
+        await interaction.response.send_message(content=f"Uh oh, An error has occured `{err.code=}`") # inform user of failure
+
     try:
         message = await options.channel.fetch_message(message_id) # find requested Message object
         await message.edit(attachments=None) # remove attachments from Message
