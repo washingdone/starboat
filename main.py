@@ -55,7 +55,7 @@ class starboatClient(commands.InteractionBot): # define custom client class
                         try:
                             if (user.roles.index(options.manRole)): forceArchive = True # unignore message since override requested
                         except:
-                            continue # if failed we know is not Member type, so cannot be admin user              
+                            continue # if failed we know is not Member type, so cannot be admin user
                 if (str(react.emoji) == str(options.confEmote)): ignoreMessage = True # exit if message already pinned
 
 
@@ -90,7 +90,6 @@ except BaseException as err:
 async def uploadScreenshot(interaction, message_id, image: disnake.Attachment): # define new command
     try:
         message = await options.channel.fetch_message(message_id) # find requested Message object
-        await message.edit(attachments=None) # remove existing Attachments
         await message.edit(file=await image.to_file()) # upload Attachment as a File
     except disnake.HTTPException as err:
         print(f"An error has occured during the execution of upload_screenshot: \n{err.text=}\n{err.code=}\n{err.status=}\n{err.response=}\n{err.args=}\n{err=}") # print error to console
