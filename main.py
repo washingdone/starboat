@@ -64,11 +64,16 @@ class starboatClient(commands.InteractionBot): # define custom client class
             arcContent = f"{canMessage.channel.mention} - {canMessage.created_at.date()} - {canMessage.author.mention}\n" # build archive message (split for clarity)
             arcContent += f"{canMessage.content}"
 
+
+            arcFiles = [] # create list for storing attachments
+            for attachment in canMessage.attachments: # loop through attachments in image
+                arcFiles.append(await attachment.to_file()) # add file form of attachment to list
+
             buttonView = disnake.ui.View() # build view nessecary to hold button
             button = disnake.ui.Button(style=disnake.ButtonStyle.link, label="Jump to Message", url=canMessage.jump_url) # build jump button
             buttonView.add_item(button) # add button to view
 
-            await options.channel.send(content=arcContent, view=buttonView) # send message to archive channel
+            await options.channel.send(content=arcContent, files=arcFiles, view=buttonView) # send message to archive channel
             await canMessage.add_reaction(options.confEmote) # react to message confirming addition to archive
 
 
