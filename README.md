@@ -1,5 +1,16 @@
-# starboat
+# starboat:
 A Custom Starboard Bot
+
+## Features:
+- Allow all users to vote on messages to archive
+- Allow members with a role to force an archive
+- Allow members with a role to add attachments to an archive post
+- Allow members with a role to remove attachments of an archive post
+- Configurable channel, role, reactions, and threshold
+\
+\
+\
+` `
 
 # Installation:
 

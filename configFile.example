@@ -1,9 +1,9 @@
 {
-    "token": "Your Token Here",
-    "archiveChannel": "Your Channel ID Here",
-    "archiveEmote": "📌",
-    "overrideEmote": "📍",
-    "confirmEmote": "✅",
-    "overrideRole": "Your Role ID Here",
-    "minReacts": 1
+    "token": "Your Token Here", // Token of discord bot user
+    "archiveChannel": "Your Channel ID Here", // Channel ID of archive channel
+    "archiveEmote": "📌", // Emote for bot to watch for user voted archives
+    "overrideEmote": "📍", // Emote for bot to watch for overrider archive
+    "confirmEmote": "✅", // Emote for bot to watch for to avoid repeat posting
+    "overrideRole": "Your Role ID Here", // Role ID of role that is allowed to control archive messages
+    "minReacts": 1 // Threshold for user voted archives
 }
