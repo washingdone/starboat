@@ -1,4 +1,4 @@
-{
+{ // Your actual configFile should not have comments in it - this is regular JSON!!!!!
     "token": "Your Token Here", // Token of discord bot user
     "archiveChannel": "Your Channel ID Here", // Channel ID of archive channel
     "archiveEmote": "📌", // Emote for bot to watch for user voted archives
