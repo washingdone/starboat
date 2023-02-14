@@ -66,7 +66,7 @@ class starboatClient(commands.InteractionBot): # define custom client class
 
             if (ignoreMessage == True and forceArchive == False): return # exit if criteria not met
 
-            arcContent = f"{canMessage.channel.mention} - {canMessage.created_at.date()} - {canMessage.author.mention}\n" # build archive message (split for clarity)
+            arcContent = f"{canMessage.channel.mention} - {canMessage.created_at.astimezone().date()} - {canMessage.author.mention}\n" # build archive message (split for clarity)
             arcContent += f"{canMessage.content}"
 
 
