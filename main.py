@@ -50,8 +50,9 @@ class starboatClient(commands.InteractionBot): # define custom client class
             
             reacts = canMessage.reactions # store array of reactions for looping
             ignoreMessage, forceArchive = True, False
-            for react in reacts: # search raction array
-                if (str(react.emoji) == str(options.arcEmote) and react.count >= options.minReacts): ignoreMessage = False # exit if have not met reaction count
+            for react in reacts: # search reaction array
+                if (str(react.emoji) == str(options.confEmote)): return # exit if message already pinned
+                if (str(react.emoji) == str(options.arcEmote) and react.count >= options.minReacts): ignoreMessage = False # unignore if it has met the reaction count
                 if (str(react.emoji) == str(options.manEmote)): # check if emoji is equal to manual override emoji
                     async for user in react.users(): # search members who reacted with emoji
                         user = await canMessage.guild.fetch_member(user.id) # transform user into Member object
@@ -61,7 +62,6 @@ class starboatClient(commands.InteractionBot): # define custom client class
                             pass # if value error raised, user did not have role, therefore do not unignore message
                         else:
                             forceArchive = True # unignore message since override requested
-                if (str(react.emoji) == str(options.confEmote)): ignoreMessage, forceArchive = True, False # exit if message already pinned
 
 
             if (ignoreMessage == True and forceArchive == False): return # exit if criteria not met
